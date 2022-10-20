@@ -1,3 +1,4 @@
+import copy
 import heapq
 from typing import List, Tuple
 
@@ -66,21 +67,125 @@ class VotingRule:
         return 0
 
 
-class Plurality(VotingRule):
-    def get_winner(self) -> int:
+class ScoreBased(VotingRule):
+    def get_scores(self) -> List[int]:
+        scores = [0 for i in range(self.num_candidates)]
+        return scores
+
+    def is_valid_next_candidate(
+        self,
+        next_candidate: int,
+        next_rank: int,
+        voter: int,
+        candidate: int,
+        new_preferences: List[List[int]],
+    ) -> bool:
+        new_preferences[voter][next_rank] = next_candidate
+        remaining_candidates = set([i for i in range(self.num_candidates)])
+        for c in new_preferences[voter][: next_rank + 1]:
+            remaining_candidates.remove(c)
+        for ind, c in enumerate(remaining_candidates):
+            new_preferences[voter][next_rank + 1 + ind] = c
+
+        self.update_preferences(new_preferences)
+
+        log = self.log
+        self.log = False
+
+        scores = self.get_scores()
+
+        self.log = log
+
+        if scores[candidate] > scores[next_candidate]:
+            return True
+        elif (scores[candidate] == scores[next_candidate]) and (
+            candidate < next_candidate
+        ):
+            return True
+        else:
+            return False
+
+    def can_win_by_misreporting(
+        self, voter: int, candidate: int, original_preferences: List[List[int]]
+    ) -> bool:
+        new_preferences = copy.deepcopy(original_preferences)
+        valid_candidates = set([i for i in range(self.num_candidates)])
+
+        new_preferences[voter][0] = candidate
+        valid_candidates.remove(candidate)
+        next_rank = 1
+
+        while next_rank < self.num_candidates:
+            valid = False
+            for next_candidate in valid_candidates:
+                if self.is_valid_next_candidate(
+                    next_candidate, next_rank, voter, candidate, new_preferences
+                ):
+                    valid = True
+
+                    new_preferences[voter][next_rank] = next_candidate
+                    valid_candidates.remove(next_candidate)
+                    next_rank += 1
+
+                    break
+            if not valid:
+                return False
+        self.update_preferences(new_preferences)
+
+        log = self.log
+        # self.log = False
+
+        new_winner = self.get_winner()
+
+        self.log = log
+        assert new_winner == candidate
+
+        if self.log:
+            print("Voter " + str(voter) + " can improve by misreporting")
+            print("Original preference: " + str(original_preferences[voter]))
+            print("New preference: " + str(new_preferences[voter]))
+            print("New winner: " + str(new_winner))
+
+        return True
+
+    def is_manipulable(self) -> bool:
+        original_preferences = copy.deepcopy(self.preferences)
+
+        log = self.log
+        self.log = False
+
+        original_winner = self.get_winner()
+
+        self.log = log
+
+        for voter in range(len(original_preferences)):
+            better_candidates = original_preferences[voter][
+                : (original_preferences[voter].index(original_winner))
+            ]
+            for candidate in better_candidates:
+                if self.can_win_by_misreporting(voter, candidate, original_preferences):
+                    return True
+        return False
+
+    def get_winner(self) -> bool:
+        scores = self.get_scores()
+        winner = scores.index(max(scores))
+        return winner
+
+
+class Plurality(ScoreBased):
+    def get_scores(self) -> List[int]:
         plurality_scores = self.get_plurality_scores(
             num_candidates=self.num_candidates, preferences=self.preferences
         )
         if self.log:
             print("Plurality Scores")
             print(plurality_scores)
-
-        winner = plurality_scores.index(max(plurality_scores))
-        return winner
+        return plurality_scores
 
 
-class Borda(VotingRule):
-    def get_winner(self) -> int:
+class Borda(ScoreBased):
+    def get_scores(self) -> List[int]:
         borda_count = [0 for i in range(self.num_candidates)]
 
         for preference in self.preferences:
@@ -90,9 +195,7 @@ class Borda(VotingRule):
         if self.log:
             print("Borda Counts")
             print(borda_count)
-
-        winner = borda_count.index(max(borda_count))
-        return winner
+        return borda_count
 
 
 class PluralityWithRunoff(VotingRule):
@@ -129,7 +232,7 @@ class SingleTransferableVote(VotingRule):
     def get_winner(self) -> int:
         round_num = 0
         removed_candidates = set()
-        new_preferences = self.preferences[:][:]
+        new_preferences = copy.deepcopy(self.preferences)
         while self.num_candidates - len(removed_candidates) > 1:
             round_num += 1
             if self.log:
@@ -174,8 +277,8 @@ class SingleTransferableVote(VotingRule):
         return winner
 
 
-class Copeland(VotingRule):
-    def get_winner(self) -> int:
+class Copeland(ScoreBased):
+    def get_scores(self) -> List[int]:
         copeland_scores = [0 for i in range(self.num_candidates)]
         for candidate_1 in range(0, self.num_candidates):
             for candidate_2 in range(candidate_1 + 1, self.num_candidates):
@@ -230,14 +333,12 @@ class Copeland(VotingRule):
         if self.log:
             print([s / 2 for s in copeland_scores])
 
-        winner = copeland_scores.index(max(copeland_scores))
-
-        return winner
+        return copeland_scores
 
 
 class Schulze(VotingRule):
     def get_strongest_paths(self, adjacency_matrix: List[List[int]]) -> List[List[int]]:
-        strongest_paths = adjacency_matrix[:][:]
+        strongest_paths = copy.deepcopy(adjacency_matrix)
         for candidate in range(self.num_candidates):
             for candidate_1 in range(self.num_candidates):
                 for candidate_2 in range(self.num_candidates):
@@ -347,7 +448,7 @@ class Schulze(VotingRule):
         return winner
 
 
-def get_preferecnes(
+def get_preferences(
     preference_list: List[List[int]], cnts: List[int]
 ) -> List[List[int]]:
     preferences = []
@@ -371,7 +472,7 @@ def main():
         [2, 1, 3, 0],
     ]
     cnts = [8, 2, 4, 4, 3]
-    preferences = get_preferecnes(preference_list=preference_list, cnts=cnts)
+    preferences = get_preferences(preference_list=preference_list, cnts=cnts)
 
     votingRule = Schulze(
         num_candidates=num_candidates, preferences=preferences, log=True
@@ -390,12 +491,13 @@ def main():
         [1, 2, 3, 0],
     ]
     cnts = [3, 1, 1, 4, 4]
-    preferences = get_preferecnes(preference_list=preference_list, cnts=cnts)
+    preferences = get_preferences(preference_list=preference_list, cnts=cnts)
 
     votingRule = Copeland(
         num_candidates=num_candidates, preferences=preferences, log=True
     )
     print("Winner: " + str(votingRule.get_winner()))
+    print("Manipulable: " + str(votingRule.is_manipulable()))
 
     # STV
     print("\nSTV")
@@ -411,7 +513,7 @@ def main():
         [2, 1, 0, 3],
     ]
     cnts = [3, 3, 2, 4, 2, 2, 1]
-    preferences = get_preferecnes(preference_list=preference_list, cnts=cnts)
+    preferences = get_preferences(preference_list=preference_list, cnts=cnts)
 
     votingRule = SingleTransferableVote(
         num_candidates=num_candidates, preferences=preferences, log=True
@@ -430,7 +532,7 @@ def main():
         [3, 2, 1, 0],
     ]
     cnts = [2, 1, 2, 1, 1]
-    preferences = get_preferecnes(preference_list=preference_list, cnts=cnts)
+    preferences = get_preferences(preference_list=preference_list, cnts=cnts)
 
     votingRule = PluralityWithRunoff(
         num_candidates=num_candidates, preferences=preferences, log=True
@@ -449,10 +551,11 @@ def main():
         [3, 2, 1, 0],
     ]
     cnts = [1, 1, 1, 1, 1]
-    preferences = get_preferecnes(preference_list=preference_list, cnts=cnts)
+    preferences = get_preferences(preference_list=preference_list, cnts=cnts)
 
     votingRule = Borda(num_candidates=num_candidates, preferences=preferences, log=True)
     print("Winner: " + str(votingRule.get_winner()))
+    print("Manipulable: " + str(votingRule.is_manipulable()))
 
     # Plurality
     print("\nPlurality")
@@ -466,10 +569,13 @@ def main():
         [3, 2, 1, 0],
     ]
     cnts = [1, 1, 1, 1, 1]
-    preferences = get_preferecnes(preference_list=preference_list, cnts=cnts)
+    preferences = get_preferences(preference_list=preference_list, cnts=cnts)
 
-    votingRule = Plurality(num_candidates=num_candidates, preferences=preferences, log=True)
+    votingRule = Plurality(
+        num_candidates=num_candidates, preferences=preferences, log=True
+    )
     print("Winner: " + str(votingRule.get_winner()))
+    print("Manipulable: " + str(votingRule.is_manipulable()))
 
 
 if __name__ == "__main__":
