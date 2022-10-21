@@ -31,9 +31,12 @@
 2. At `candidates = 6`, fraction becomes nearly equal for all the voting rules. Maybe beacuse of small sample.
 2. `0` for `voters = 1` and then decreases exponentially.
 3. For `voters = 2` equal for Copeland and Borda - explanation?
+4. The order of manipulability observed from the plots - `Copeland < Borda < Plurality`
 
 ## TO-DO
-- [ ] Add inferences
+- [ ] Add more and inferences and explanations for existing inferences
+- [ ] Borda vs Plurality in hypothesis. Any modifications?
 - [ ] Add more points in justification of `5` candidates and `100` voters?
 - [ ] Detailed description of greedy strategy?
 - [x] Add experimental results
+- [ ] For varying number of candidates plot, increase `samples` to `10000` or `20000` and observe the trend.
