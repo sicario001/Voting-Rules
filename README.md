@@ -23,6 +23,7 @@
 ## Experimental Results
 ![convergence of fraction of manipulable preferences with changing sample size](f_manipulable_vs_samples.png)
 ![fraction of manipulable preferences with changing candidate count](f_manipulable_vs_candidates.png)
+![fraction of manipulable preferences with changing voter count](f_manipulable_vs_voters.png)
 
 ## Inference
 
