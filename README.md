@@ -26,17 +26,9 @@
 ![fraction of manipulable preferences with changing voter count](f_manipulable_vs_voters.png)
 
 ## Inference
-### Some rough points
-1. `0` for `candidates = 2` and then increases almost linearly.
-2. At `candidates = 6`, fraction becomes nearly equal for all the voting rules. Maybe beacuse of small sample.
-2. `0` for `voters = 1` and then decreases exponentially.
-3. For `voters = 2` equal for Copeland and Borda - explanation?
-4. The order of manipulability observed from the plots - `Copeland < Borda < Plurality`
-
-## TO-DO
-- [ ] Add more and inferences and explanations for existing inferences
-- [ ] Borda vs Plurality in hypothesis. Any modifications?
-- [ ] Add more points in justification of `5` candidates and `100` voters?
-- [ ] Detailed description of greedy strategy?
-- [x] Add experimental results
-- [ ] For varying number of candidates plot, increase `samples` to `10000` or `20000` and observe the trend.
+1. We observe that the manipulability is `0` for `candidates = 2`. This is because if some voters' best candidate doesn't win, then he/she can has only one way to change his/her preference and that makes his/her candidate even worse off. We also observe that on increasing the number of candidates, manipulability increases almost linearly.
+2. At `candidates = 6`, fraction becomes nearly equal for all the voting rules. This happens probably due to small sample size.
+3. We observe that for `candidates=2`, Copeland and Borda have same manipulability.
+4. The order of manipulability observed from the plots - `Copeland < Borda < Plurality`. However, as the number of candidates increase (keeping the number of voters fixed), we observe that the manipulability for Copeland overshoots the other two. We conjecture that this happens when the number of candidates comes close to the number of voters.
+5. As the number of voters increase, the manipulability decreases. This is expected because more voters means less weight of a single vote. So, wrong preferences given by one voter is less likely to change the outcome.
+6. We observe that on increasing the number of voters (keeping the number of candidates fixed), the manipulability first increases rapidly and then decays exponentially later on.
