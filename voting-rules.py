@@ -1,7 +1,7 @@
 import copy
 import heapq
 from typing import List, Tuple
-
+import numpy
 
 class VotingRule:
     def __init__(self, num_candidates: int, preferences: List[List[int]], log=False):
@@ -578,5 +578,40 @@ def main():
     print("Manipulable: " + str(votingRule.is_manipulable()))
 
 
+def experiment(voters: int, candidates: int, num_samples: int):
+    copeland = Copeland(num_candidates=candidates, preferences=None, log=False) 
+    borda = Borda(num_candidates=candidates, preferences=None, log=False) 
+    plurality = Plurality(num_candidates=candidates, preferences=None, log=False) \
+    
+    num_manipulable_copeland = 0
+    num_manipulable_borda = 0
+    num_manipulable_plurality = 0
+
+    for i in range(num_samples):
+        preferences = []
+        for j in range(voters):
+            preferences.append(list(numpy.random.permutation(candidates)))
+
+        copeland.update_preferences(preferences)
+        borda.update_preferences(preferences)
+        plurality.update_preferences(preferences)
+        
+        if copeland.is_manipulable():
+            num_manipulable_copeland += 1
+        if borda.is_manipulable():
+            num_manipulable_borda += 1
+        if plurality.is_manipulable():
+            num_manipulable_plurality += 1
+
+    f_manipulable_copeland = num_manipulable_copeland/num_samples
+    f_manipulable_borda = num_manipulable_borda/num_samples
+    f_manipulable_plurality = num_manipulable_plurality/num_samples
+
+    print("Fraction of manipulable preferences")
+    print("Copeland: " + str(f_manipulable_copeland))
+    print("Borda: " + str(f_manipulable_borda))
+    print("Plurality: " + str(f_manipulable_plurality))
+
 if __name__ == "__main__":
-    main()
+    # main()
+    experiment(10, 5, 10000)
