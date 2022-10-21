@@ -465,124 +465,172 @@ def get_preferences(
 
 def main():
 
-    # Schulze
-    print("\nSchulze")
-    num_candidates = 4
-    # R = 0, G = 1, Y = 2, B = 3
-    preference_list = [
-        [0, 1, 2, 3],
-        [3, 0, 2, 1],
-        [1, 2, 3, 0],
-        [2, 3, 0, 1],
-        [2, 1, 3, 0],
-    ]
-    cnts = [8, 2, 4, 4, 3]
-    preferences = get_preferences(preference_list=preference_list, cnts=cnts)
+    # # Schulze
+    # print("\nSchulze")
+    # num_candidates = 4
+    # # R = 0, G = 1, Y = 2, B = 3
+    # preference_list = [
+    #     [0, 1, 2, 3],
+    #     [3, 0, 2, 1],
+    #     [1, 2, 3, 0],
+    #     [2, 3, 0, 1],
+    #     [2, 1, 3, 0],
+    # ]
+    # cnts = [8, 2, 4, 4, 3]
+    # preferences = get_preferences(preference_list=preference_list, cnts=cnts)
 
-    votingRule = Schulze(
+    # votingRule = Schulze(
+    #     num_candidates=num_candidates, preferences=preferences, log=True
+    # )
+    # print("Winner: " + str(votingRule.get_winner()))
+
+    # # Copeland
+    # print("\nCopeland")
+    # num_candidates = 4
+    # # R = 0, G = 1, Y = 2, B = 3
+    # preference_list = [
+    #     [0, 3, 2, 1],
+    #     [0, 2, 1, 3],
+    #     [0, 1, 2, 3],
+    #     [3, 0, 2, 1],
+    #     [1, 2, 3, 0],
+    # ]
+    # cnts = [3, 1, 1, 4, 4]
+    # preferences = get_preferences(preference_list=preference_list, cnts=cnts)
+
+    # votingRule = Copeland(
+    #     num_candidates=num_candidates, preferences=preferences, log=True
+    # )
+    # print("Winner: " + str(votingRule.get_winner()))
+    # print("Manipulable: " + str(votingRule.is_manipulable()))
+
+    # # STV
+    # print("\nSTV")
+    # num_candidates = 4
+    # # R = 0, G = 1, Y = 2, B = 3
+    # preference_list = [
+    #     [0, 3, 2, 1],
+    #     [0, 1, 2, 3],
+    #     [3, 2, 0, 1],
+    #     [3, 2, 1, 0],
+    #     [1, 2, 0, 3],
+    #     [1, 2, 3, 0],
+    #     [2, 1, 0, 3],
+    # ]
+    # cnts = [3, 3, 2, 4, 2, 2, 1]
+    # preferences = get_preferences(preference_list=preference_list, cnts=cnts)
+
+    # votingRule = SingleTransferableVote(
+    #     num_candidates=num_candidates, preferences=preferences, log=True
+    # )
+    # print("Winner: " + str(votingRule.get_winner()))
+
+    # # Plurality with runoff
+    # print("\nPlurality with runoff")
+    # num_candidates = 4
+    # # R = 0, G = 1, Y = 2, B = 3
+    # preference_list = [
+    #     [0, 3, 1, 2],
+    #     [0, 1, 2, 3],
+    #     [1, 3, 2, 0],
+    #     [2, 1, 3, 0],
+    #     [3, 2, 1, 0],
+    # ]
+    # cnts = [2, 1, 2, 1, 1]
+    # preferences = get_preferences(preference_list=preference_list, cnts=cnts)
+
+    # votingRule = PluralityWithRunoff(
+    #     num_candidates=num_candidates, preferences=preferences, log=True
+    # )
+    # print("Winner: " + str(votingRule.get_winner()))
+
+    # # Borda
+    # print("\nBorda")
+    # num_candidates = 4
+    # # R = 0, G = 1, Y = 2, B = 3
+    # preference_list = [
+    #     [0, 3, 1, 2],
+    #     [0, 1, 2, 3],
+    #     [1, 3, 2, 0],
+    #     [2, 1, 3, 0],
+    #     [3, 2, 1, 0],
+    # ]
+    # cnts = [1, 1, 1, 1, 1]
+    # preferences = get_preferences(preference_list=preference_list, cnts=cnts)
+
+    # votingRule = Borda(num_candidates=num_candidates, preferences=preferences, log=True)
+    # print("Winner: " + str(votingRule.get_winner()))
+    # print("Manipulable: " + str(votingRule.is_manipulable()))
+
+    # # Plurality
+    # print("\nPlurality")
+    # num_candidates = 4
+    # # R = 0, G = 1, Y = 2, B = 3
+    # preference_list = [
+    #     [0, 3, 1, 2],
+    #     [0, 1, 2, 3],
+    #     [1, 3, 2, 0],
+    #     [2, 1, 3, 0],
+    #     [3, 2, 1, 0],
+    # ]
+    # cnts = [1, 1, 1, 1, 1]
+    # preferences = get_preferences(preference_list=preference_list, cnts=cnts)
+
+    # votingRule = Plurality(
+    #     num_candidates=num_candidates, preferences=preferences, log=True
+    # )
+    # print("Winner: " + str(votingRule.get_winner()))
+    # print("Manipulable: " + str(votingRule.is_manipulable()))
+
+    # Q1
+    print("\nPlurality")
+    num_candidates = 5
+    preference_list = [
+        [2,3,1,0,4], # c > d > b > a > e
+        [2,4,1,3,0], # c > e > b > d > a
+        [3,4,2,1,0],  # d > e > c > b > a 
+        [4,2,1,3,0], # 22voters: e > c > b > d > a 
+        [1,3,2,4,0],  # 16voters: b > d > c > e > a 
+        [0,1,2,3,4] #33voters: a > b > c > d > e
+    ]
+    cnts = [3,8,18,22,16,33]
+    preferences = get_preferences(preference_list=preference_list, cnts=cnts)
+    votingRule = Plurality(
+        num_candidates=num_candidates, preferences=preferences, log=True
+    )
+    print("Winner: " + str(votingRule.get_winner()))
+    
+    print("\nBorda")
+    votingRule = Borda(
         num_candidates=num_candidates, preferences=preferences, log=True
     )
     print("Winner: " + str(votingRule.get_winner()))
 
-    # Copeland
-    print("\nCopeland")
-    num_candidates = 4
-    # R = 0, G = 1, Y = 2, B = 3
-    preference_list = [
-        [0, 3, 2, 1],
-        [0, 2, 1, 3],
-        [0, 1, 2, 3],
-        [3, 0, 2, 1],
-        [1, 2, 3, 0],
-    ]
-    cnts = [3, 1, 1, 4, 4]
-    preferences = get_preferences(preference_list=preference_list, cnts=cnts)
-
-    votingRule = Copeland(
-        num_candidates=num_candidates, preferences=preferences, log=True
-    )
-    print("Winner: " + str(votingRule.get_winner()))
-    print("Manipulable: " + str(votingRule.is_manipulable()))
-
-    # STV
-    print("\nSTV")
-    num_candidates = 4
-    # R = 0, G = 1, Y = 2, B = 3
-    preference_list = [
-        [0, 3, 2, 1],
-        [0, 1, 2, 3],
-        [3, 2, 0, 1],
-        [3, 2, 1, 0],
-        [1, 2, 0, 3],
-        [1, 2, 3, 0],
-        [2, 1, 0, 3],
-    ]
-    cnts = [3, 3, 2, 4, 2, 2, 1]
-    preferences = get_preferences(preference_list=preference_list, cnts=cnts)
-
-    votingRule = SingleTransferableVote(
-        num_candidates=num_candidates, preferences=preferences, log=True
-    )
-    print("Winner: " + str(votingRule.get_winner()))
-
-    # Plurality with runoff
     print("\nPlurality with runoff")
-    num_candidates = 4
-    # R = 0, G = 1, Y = 2, B = 3
-    preference_list = [
-        [0, 3, 1, 2],
-        [0, 1, 2, 3],
-        [1, 3, 2, 0],
-        [2, 1, 3, 0],
-        [3, 2, 1, 0],
-    ]
-    cnts = [2, 1, 2, 1, 1]
-    preferences = get_preferences(preference_list=preference_list, cnts=cnts)
-
     votingRule = PluralityWithRunoff(
         num_candidates=num_candidates, preferences=preferences, log=True
     )
     print("Winner: " + str(votingRule.get_winner()))
 
-    # Borda
-    print("\nBorda")
-    num_candidates = 4
-    # R = 0, G = 1, Y = 2, B = 3
-    preference_list = [
-        [0, 3, 1, 2],
-        [0, 1, 2, 3],
-        [1, 3, 2, 0],
-        [2, 1, 3, 0],
-        [3, 2, 1, 0],
-    ]
-    cnts = [1, 1, 1, 1, 1]
-    preferences = get_preferences(preference_list=preference_list, cnts=cnts)
-
-    votingRule = Borda(num_candidates=num_candidates, preferences=preferences, log=True)
-    print("Winner: " + str(votingRule.get_winner()))
-    print("Manipulable: " + str(votingRule.is_manipulable()))
-
-    # Plurality
-    print("\nPlurality")
-    num_candidates = 4
-    # R = 0, G = 1, Y = 2, B = 3
-    preference_list = [
-        [0, 3, 1, 2],
-        [0, 1, 2, 3],
-        [1, 3, 2, 0],
-        [2, 1, 3, 0],
-        [3, 2, 1, 0],
-    ]
-    cnts = [1, 1, 1, 1, 1]
-    preferences = get_preferences(preference_list=preference_list, cnts=cnts)
-
-    votingRule = Plurality(
+    print("\nSTV")
+    votingRule = SingleTransferableVote(
         num_candidates=num_candidates, preferences=preferences, log=True
     )
     print("Winner: " + str(votingRule.get_winner()))
-    print("Manipulable: " + str(votingRule.is_manipulable()))
 
+    print("\nCopeland")
+    votingRule = Copeland(
+        num_candidates=num_candidates, preferences=preferences, log=True
+    )
+    print("Winner: " + str(votingRule.get_winner()))
 
+    print("\nSchulze")
+    votingRule = Schulze(
+        num_candidates=num_candidates, preferences=preferences, log=True
+    )
+    print("Winner: " + str(votingRule.get_winner()))
+
+    
 def process_sample(voters: int, candidates: int):
     copeland = Copeland(num_candidates=candidates, preferences=None, log=False)
     borda = Borda(num_candidates=candidates, preferences=None, log=False)
@@ -750,6 +798,7 @@ def exp3():
 
 
 if __name__ == "__main__":
-    exp1()
-    exp2()
-    exp3()
+    # exp1()
+    # exp2()
+    # exp3()
+    main()
