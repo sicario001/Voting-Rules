@@ -1,7 +1,12 @@
 import copy
 import heapq
+import math
 from typing import List, Tuple
 import numpy
+import matplotlib.pyplot as plt
+from joblib import Parallel, delayed
+import multiprocessing
+
 
 class VotingRule:
     def __init__(self, num_candidates: int, preferences: List[List[int]], log=False):
@@ -578,40 +583,173 @@ def main():
     print("Manipulable: " + str(votingRule.is_manipulable()))
 
 
+def process_sample(voters: int, candidates: int):
+    copeland = Copeland(num_candidates=candidates, preferences=None, log=False)
+    borda = Borda(num_candidates=candidates, preferences=None, log=False)
+    plurality = Plurality(num_candidates=candidates, preferences=None, log=False)
+
+    preferences = []
+    for j in range(voters):
+        preferences.append(list(numpy.random.permutation(candidates)))
+
+    copeland.update_preferences(preferences)
+    borda.update_preferences(preferences)
+    plurality.update_preferences(preferences)
+
+    manipulable_copeland = 0
+    manipulable_borda = 0
+    manipulable_plurality = 0
+
+    if copeland.is_manipulable():
+        manipulable_copeland += 1
+    if borda.is_manipulable():
+        manipulable_borda += 1
+    if plurality.is_manipulable():
+        manipulable_plurality += 1
+
+    return manipulable_copeland, manipulable_borda, manipulable_plurality
+
+
 def experiment(voters: int, candidates: int, num_samples: int):
-    copeland = Copeland(num_candidates=candidates, preferences=None, log=False) 
-    borda = Borda(num_candidates=candidates, preferences=None, log=False) 
-    plurality = Plurality(num_candidates=candidates, preferences=None, log=False) \
-    
     num_manipulable_copeland = 0
     num_manipulable_borda = 0
     num_manipulable_plurality = 0
 
-    for i in range(num_samples):
-        preferences = []
-        for j in range(voters):
-            preferences.append(list(numpy.random.permutation(candidates)))
+    num_cores = multiprocessing.cpu_count()
 
-        copeland.update_preferences(preferences)
-        borda.update_preferences(preferences)
-        plurality.update_preferences(preferences)
-        
-        if copeland.is_manipulable():
-            num_manipulable_copeland += 1
-        if borda.is_manipulable():
-            num_manipulable_borda += 1
-        if plurality.is_manipulable():
-            num_manipulable_plurality += 1
+    results = Parallel(n_jobs=num_cores)(
+        delayed(process_sample)(voters, candidates) for i in range(num_samples)
+    )
 
-    f_manipulable_copeland = num_manipulable_copeland/num_samples
-    f_manipulable_borda = num_manipulable_borda/num_samples
-    f_manipulable_plurality = num_manipulable_plurality/num_samples
+    for result in results:
+        num_manipulable_copeland += result[0]
+        num_manipulable_borda += result[1]
+        num_manipulable_plurality += result[2]
+
+    f_manipulable_copeland = num_manipulable_copeland / num_samples
+    f_manipulable_borda = num_manipulable_borda / num_samples
+    f_manipulable_plurality = num_manipulable_plurality / num_samples
 
     print("Fraction of manipulable preferences")
     print("Copeland: " + str(f_manipulable_copeland))
     print("Borda: " + str(f_manipulable_borda))
     print("Plurality: " + str(f_manipulable_plurality))
 
+    return f_manipulable_copeland, f_manipulable_borda, f_manipulable_plurality
+
+
+def exp1():
+    # f-manipulable vs number of candidates
+    f_copeland = []
+    f_borda = []
+    f_plurality = []
+
+    exp_candidates: List[int] = [2, 3, 4, 5, 6]
+    exp_voters = 100
+
+    samples = 5000
+
+    for candidates in exp_candidates:
+        copeland, borda, plurality = experiment(exp_voters, candidates, samples)
+        f_copeland.append(copeland)
+        f_borda.append(borda)
+        f_plurality.append(plurality)
+
+    f_copeland = numpy.array(f_copeland)
+    f_borda = numpy.array(f_borda)
+    f_plurality = numpy.array(f_plurality)
+
+    exp_candidates = numpy.array(exp_candidates)
+
+    plt.plot(exp_candidates, f_copeland, color="r", label="Copeland")
+    plt.plot(exp_candidates, f_borda, color="g", label="Borda")
+    plt.plot(exp_candidates, f_plurality, color="b", label="Plurality")
+
+    plt.xticks(exp_candidates)
+
+    plt.xlabel("Number of candidates")
+    plt.ylabel("Fraction of manipulable preferences")
+    plt.title("Fraction of manipulable preferences with changing candidate count")
+    plt.legend()
+    # plt.show()
+    plt.savefig("f_manipulable_vs_candidates.png")
+
+
+def exp2():
+    # f-manipulable vs sample sizes
+    f_copeland = []
+    f_borda = []
+    f_plurality = []
+
+    exp_candidates = 5
+    exp_voters = 100
+
+    samples = [100, 500, 1000, 2000, 5000, 10000]
+
+    for sample in samples:
+        copeland, borda, plurality = experiment(exp_voters, exp_candidates, sample)
+        f_copeland.append(copeland)
+        f_borda.append(borda)
+        f_plurality.append(plurality)
+
+    f_copeland = numpy.array(f_copeland)
+    f_borda = numpy.array(f_borda)
+    f_plurality = numpy.array(f_plurality)
+
+    samples = numpy.array(samples)
+
+    plt.plot(samples, f_copeland, color="r", label="Copeland")
+    plt.plot(samples, f_borda, color="g", label="Borda")
+    plt.plot(samples, f_plurality, color="b", label="Plurality")
+
+    plt.xticks(samples, fontsize=6)
+
+    plt.xlabel("Number of samples")
+    plt.ylabel("Fraction of manipulable preferences")
+    plt.title("Fraction of manipulable preferences with changing sample size")
+    plt.legend()
+    # plt.show()
+    plt.savefig("f_manipulable_vs_samples.png")
+
+
+def exp3():
+    # f-manipulable vs number of voters
+    f_copeland = []
+    f_borda = []
+    f_plurality = []
+
+    exp_candidates = 5
+    exp_voters = [1, 2, 5, 10, 20, 50, 100, 200]
+
+    samples = 5000
+
+    for exp_voter in exp_voters:
+        copeland, borda, plurality = experiment(exp_voter, exp_candidates, samples)
+        f_copeland.append(copeland)
+        f_borda.append(borda)
+        f_plurality.append(plurality)
+
+    f_copeland = numpy.array(f_copeland)
+    f_borda = numpy.array(f_borda)
+    f_plurality = numpy.array(f_plurality)
+
+    exp_voters = numpy.array(exp_voters)
+
+    plt.plot(exp_voters, f_copeland, color="r", label="Copeland")
+    plt.plot(exp_voters, f_borda, color="g", label="Borda")
+    plt.plot(exp_voters, f_plurality, color="b", label="Plurality")
+
+    plt.xticks(samples)
+
+    plt.xlabel("Number of voters")
+    plt.ylabel("Fraction of manipulable preferences")
+    plt.title("Fraction of manipulable preferences with changing voter count")
+    plt.legend()
+    # plt.show()
+    plt.savefig("f_manipulable_vs_voters.png")
+
+
 if __name__ == "__main__":
-    # main()
-    experiment(10, 5, 10000)
+    exp1()
+    #    exp2()
+    exp3()
