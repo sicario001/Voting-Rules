@@ -9,12 +9,12 @@
 ## Experimental Setup
 ### Experiments
 1. Analyzing the convergence of fraction of manipulable preferences with changing sample size. We fixed the number of candidates to `5`, number of voters to `100` and varied the sample size as `[100, 500, 1000, 2000, 5000, 10000]`.
-2. Analyzing the fraction of manipulable preferences with changing candidate count. We fixed the number of voters to `100` and number of samples to `5000` and varied the candidate count as `[2, 3, 4, 5, 6]`
+2. Analyzing the fraction of manipulable preferences with changing candidate count. We fixed the number of voters to `100` and number of samples to `5000` and varied the candidate count as `[2, 3, 4, 5, 6, 8, 10]`
 3. Analyzing the fraction of manipulable preferences with changing voter count. We fixed the number of candidates to `5` and number of samples to `5000` and varied the voter count as `[1, 2, 5, 10, 20, 50, 100, 200]`
 
 ### Justifications
-1. A setting of `5` candidates and `100` voters looks natural and at the same time is small enough to be efficiently computable for manipulability.
-2. Based on the convergence plot, `5000` samples appears to be sweet spot for both high confidence of manipulable fractions as well as efficiency.
+1. A setting of `5` candidates and `100` voters looks natural for an election, and at the same time is small enough to be efficiently computable for manipulability.
+2. Based on the convergence plot, `5000` samples appears to be sweet spot for both high confidence of manipulable fractions as well as efficiency of computation.
 
 ### Algorithm for checking manipulability
 1. Greedy strategy for f-Manipulation, discussed in [lecture 14](https://rohitvaish.in/Teaching/2022-Fall/Slides/Lecture-14.pdf), is being used for checking manipulability.
