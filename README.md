@@ -17,11 +17,12 @@
 2. Based on the convergence plot, `5000` samples appears to be sweet spot for both high confidence of manipulable fractions as well as efficiency.
 
 ### Algorithm for checking manipulability
-1. Greedy strategy for f-Manipulation, discussed in [lecture 14]{https://rohitvaish.in/Teaching/2022-Fall/Slides/Lecture-14.pdf}, is being used for checking manipulability.
+1. Greedy strategy for f-Manipulation, discussed in [lecture 14](https://rohitvaish.in/Teaching/2022-Fall/Slides/Lecture-14.pdf), is being used for checking manipulability.
 2. If the original winner is `w`, then for each voter `v`, denote by `G(v, w)` the set of candidates which are more preferred than `w` by `v`. For each voter `v`, and each candidate `c` in `G(v, w)`, we check if `v` can manipulate its vote to make `c` win, using the greedy startegy.
 
 ## Experimental Results
-
+![convergence of fraction of manipulable preferences with changing sample size](f_manipulable_vs_samples.png)
+![fraction of manipulable preferences with changing candidate count](f_manipulable_vs_candidates.png)
 
 ## Inference
 
