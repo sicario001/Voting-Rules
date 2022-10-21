@@ -30,4 +30,4 @@
 - [ ] Add inferences
 - [ ] Add more points in justification of `5` candidates and `100` voters?
 - [ ] Detailed description of greedy strategy?
-- [ ] Add experimental results
+- [x] Add experimental results

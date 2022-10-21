@@ -739,7 +739,7 @@ def exp3():
     plt.plot(exp_voters, f_borda, color="g", label="Borda")
     plt.plot(exp_voters, f_plurality, color="b", label="Plurality")
 
-    plt.xticks(samples)
+    plt.xticks(exp_voters, fontsize=6)
 
     plt.xlabel("Number of voters")
     plt.ylabel("Fraction of manipulable preferences")
@@ -751,5 +751,5 @@ def exp3():
 
 if __name__ == "__main__":
     exp1()
-    #    exp2()
+    exp2()
     exp3()
