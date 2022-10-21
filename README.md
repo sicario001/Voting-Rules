@@ -26,6 +26,11 @@
 ![fraction of manipulable preferences with changing voter count](f_manipulable_vs_voters.png)
 
 ## Inference
+### Some rough points
+1. `0` for `candidates = 2` and then increases almost linearly.
+2. At `candidates = 6`, fraction becomes nearly equal for all the voting rules. Maybe beacuse of small sample.
+2. `0` for `voters = 1` and then decreases exponentially.
+3. For `voters = 2` equal for Copeland and Borda - explanation?
 
 ## TO-DO
 - [ ] Add inferences
