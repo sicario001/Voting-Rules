@@ -26,8 +26,8 @@
 ![fraction of manipulable preferences with changing voter count](f_manipulable_vs_voters.png)
 
 ## Inference
-1. We observe that the manipulability is `0` for `candidates = 2`. This is because if some voters' best candidate doesn't win, then he/she can has only one way to change his/her preference and that makes his/her candidate even worse off. We also observe that on increasing the number of candidates, manipulability increases almost linearly.
-2. At `candidates = 6`, fraction becomes nearly equal for all the voting rules. This happens probably due to small sample size.
+1. We observe that the manipulability is `0` for `candidates = 2`. This is because if some voters' best candidate doesn't win, then he/she can has only one way to change his/her preference and that makes his/her best candidate even worse off. We also observe that on increasing the number of candidates, manipulability increases almost linearly.
+2. At `candidates = 6`, the fraction becomes nearly equal for all the voting rules. This happens probably due to small sample size.
 3. We observe that for `candidates=2`, Copeland and Borda have same manipulability.
 4. The order of manipulability observed from the plots - `Copeland < Borda < Plurality`. However, as the number of candidates increase (keeping the number of voters fixed), we observe that the manipulability for Copeland overshoots the other two. We conjecture that this happens when the number of candidates comes close to the number of voters.
 5. As the number of voters increase, the manipulability decreases. This is expected because more voters means less weight of a single vote. So, wrong preferences given by one voter is less likely to change the outcome.
