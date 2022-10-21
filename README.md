@@ -4,7 +4,7 @@
 1. For each of Copeland, Borda and Plurality, the winner is the candidate securing the highest score.
 2. In Copeland, modifying the preferecne of a single voter, say `v`, might not necessarily lead to an increase in score of `v's` preferred candidate. For instance, consider an example where the head to head scores for every pair of candidates differ by at least 2 without considering the vote of`v`. In such a scenario, vote of `v` won't have any effect on the final scores of candidates.
 3. In Borda and Plurality, on the other hand, the vote of `v` can increase the score of `v's` preferred candidates (other than `v's` most preferred candidate). Thus, the extent of manipulability appears higher in Borda and Plurality.
-4. In Borda, there is a possibility to increase the maximum score of `v's` more preferred candidates (more preferred than original winner) and at the same time decrease the maximum score of `v's` lesser preferred candidates (original winner and lesser preferred candidates). However, in Plurality, the vote of `v` can only increase the maximum score of `v's` more preferred candidates. So, it appears that Borda in more manipulable than Plurality.
+4. In Borda, there is a possibility to increase the maximum score of `v's` more preferred candidates (more preferred than original winner) and at the same time decrease the maximum score of `v's` lesser preferred candidates (original winner and lesser preferred candidates). However, in Plurality, the vote of `v` can only increase the maximum score of `v's` more preferred candidates. So, it appears that Borda in more manipulable than Plurality. So, the expected trend in manipulability is `Borda > Plurality > Copeland`
 
 ## Experimental Setup
 ### Experiments
